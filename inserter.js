@@ -177,6 +177,7 @@ function insert() {
         { name: 'egg_1051', type: 'BYTES' },
         { name: 'egg_1063', type: 'BYTES' },
         { name: 'egg_1066', type: 'BYTES' },
+        { name: 'egg_1070', type: 'BYTES' },
         { name: 'egg_1082', type: 'BYTES' },
         { name: 'egg_1092', type: 'BYTES' },
         { name: 'egg_1095', type: 'BYTES' },
