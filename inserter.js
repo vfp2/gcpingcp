@@ -21,6 +21,7 @@ var moment = require('moment');
 const _ = require('lodash');
 const request = require('request');
 const csvparser = require('csv-parse');
+const fs = require('fs');
 
 const {BigQuery} = require('@google-cloud/bigquery');
 const bigquery = new BigQuery();
@@ -38,7 +39,14 @@ const API_HOST = "http://global-mind.org";
 // "Trial size" seems fixed at 200 bits/sec so we'll const'ify it
 // const TRIAL_SIZE = 200;
 
-function makeRequestUrl(year, month, day, startTime, endTime) {
+function makeRequestUrl(date) {
+  var year = date.format('YYYY');
+  var month = date.format('MM');
+  var day = date.format('DD');
+  var startTime = '00:00:00';
+  var endTime = '23:59:59';
+
+
   var url = API_HOST +
       "/cgi-bin/eggdatareq.pl" +
       "?z=1" + // not sure what this does
@@ -65,7 +73,7 @@ function handleErrors(gcpRequestError, gcpResponse) {
   return false;
 }
 
-function extractAndInsertEntropy(body) {
+function extractAndInsertEntropy(body, writeToFile = false) {
   console.log("GCP response size: " + body.length);
   // parse the csv output
   // ref: http://noosphere.princeton.edu/basket_CSV_v2.html
@@ -80,9 +88,9 @@ function extractAndInsertEntropy(body) {
 
           // iterate all lines, process only sample egg ID and value rows
           var eggIDs = [];
-          var rowsForBQ = [];
+          const rowsForBQ = [];
+          var yyymmdd;
           records.forEach(async function (record) {
-            var newRow = [];
             if (record[0] == 12) { // field type 12: IDs of EGGs in today's sample set
               _.slice(record, 3) // skip field type, "gmtime" and empty
               .forEach(function(eggID) {
@@ -91,37 +99,50 @@ function extractAndInsertEntropy(body) {
             }
 
             if (record[0] == 13) { // field type 13: actual sample data
+              if (!yyymmdd) {
+                yyyymmdd = moment(record[1]*1000).utc().format('YYYY-MM-DD');
+              }
+
               var rowObj = { recorded_at: moment(record[1]*1000).utc().format('YYYY-MM-DD HH:mm:ss') };
               var i = 0;
               _.slice(record, 3) // skip field type, unix timestamp, user friendly timestamp columns
               .forEach(function (samplit) {
                 var uint8 = new Buffer(1);
                 if (samplit) {
-                    uint8[0] = samplit;
-                    rowObj[eggIDs[i]] = uint8
+                  uint8[0] = samplit;
+                  rowObj[eggIDs[i]] = uint8
+                } else {
+                  uint8[0] = null;
                 }
                 i++;
               });
 
               // console.log(rowObj);
               rowsForBQ.push(rowObj);
-
-              // TODO: temp
-              if (rowsForBQ.length == 9999) {
-                await bigquery.dataset(datasetId).table(tableId).insert(rowsForBQ);
-                console.log(`Inserted ${rowsForBQ.length} rows`);
-                return;
-              }
             }
           });
 
-          // await bigquery.dataset(datasetId).table(tableId).insert(rowsForBQ);
-          // console.log(`Inserted ${rowsForBQ.length} rows`);
+          if (!writeToFile) {
+            // max 10,000 rows insert/time on BQ
+            let index = 0;
+            let size = 7500; // "error": {\n' + "code": 400,\n' +' "message": "Request payload size exceeds the limit: 10485760 bytes.",\n' +
+      
+            while (index < rowsForBQ.length) {
+              let chunk = rowsForBQ.slice(index, size + index);
+              await bigquery.dataset(datasetId).table(tableId).insert(chunk);
+              console.log(`Inserted ${chunk.length} rows (max chunker)`);
+              index += size;
+            }
+          } else {
+            fs.writeFile(`${yyyymmdd}.json`, JSON.stringify(rowsForBQ), (err) => {
+              if (err) throw err;
+            });
+          }
       });
 }
 
-function insert() {
-  async function insertAsync() {
+function insert(addDays = 0, startDate = null, writeToFile = false) {
+  async function insertAsync(addDays = 0, startDate = null, writeToFile = false) {
 
     try {
       await bigquery.createDataset(datasetId);
@@ -278,7 +299,6 @@ function insert() {
 
       const options = {
         schema: schema,
-        location: 'SG'
         location: 'SG',
         // timePartitioning: {
         //   type: 'DAY',
@@ -289,24 +309,25 @@ function insert() {
       await bigquery.dataset(datasetId).createTable(tableId, options);
     } catch {}
 
-    var gcpStartDate = moment('1998-08-05', 'YYYY-MM-DD')
-    // var gcpStartDate = moment('2001-09-11', 'YYYY-MM-DD')
-    var yearFmt = gcpStartDate.format('YYYY');
-    var monthFmt = gcpStartDate.format('MM');
-    var dayFmt = gcpStartDate.format('DD');
-    var gcpStartReqUrl = makeRequestUrl(yearFmt, monthFmt, dayFmt, '00:00:00', '23:59:59');
+    var getDate = moment('1998-08-02', 'YYYY-MM-DD');
+    // var getDate = moment('2020-10-20', 'YYYY-MM-DD')
 
-    request(gcpStartReqUrl,
-      function (gcpRequestError, gcpResponse, todayBody) {
-        if (handleErrors(gcpRequestError, gcpResponse)) {
-            return;
-        }
+    if (startDate) {
+      getDate = moment(startDate, 'YYYY-MM-DD')
+    }
 
-        extractAndInsertEntropy(todayBody);
-      });
+    getDate = getDate.add(addDays, 'd');
+
+    request(makeRequestUrl(getDate), function (gcpRequestError, gcpResponse, body) {
+      if (handleErrors(gcpRequestError, gcpResponse)) {
+          return;
+      }
+
+      extractAndInsertEntropy(body, writeToFile);
+    });
   }
 
-  insertAsync();
+  insertAsync(addDays, startDate, writeToFile);
 }
 
-insert();
+insert(...process.argv.slice(2));
