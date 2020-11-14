@@ -280,6 +280,10 @@ function insert() {
         schema: schema,
         location: 'SG'
         location: 'SG',
+        // timePartitioning: {
+        //   type: 'DAY',
+        //   field: 'recorded_at',
+        // },
       };
 
       await bigquery.dataset(datasetId).createTable(tableId, options);
