@@ -279,6 +279,7 @@ function insert() {
       const options = {
         schema: schema,
         location: 'SG'
+        location: 'SG',
       };
 
       await bigquery.dataset(datasetId).createTable(tableId, options);
