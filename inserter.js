@@ -55,7 +55,7 @@ function makeRequestUrl(date) {
       "&day=" + day +
       "&stime=" + startTime +
       "&etime=" + endTime;
-  console.log("request url:" + url);
+  console.log(url);
   return url;
 }
 
@@ -74,7 +74,7 @@ function handleErrors(gcpRequestError, gcpResponse) {
 }
 
 function extractAndInsertEntropy(body, writeToFile = false) {
-  console.log("GCP response size: " + body.length);
+  //console.log("GCP response size: " + body.length);
   // parse the csv output
   // ref: http://noosphere.princeton.edu/basket_CSV_v2.html
   csvparser(
@@ -130,7 +130,7 @@ function extractAndInsertEntropy(body, writeToFile = false) {
             while (index < rowsForBQ.length) {
               let chunk = rowsForBQ.slice(index, size + index);
               await bigquery.dataset(datasetId).table(tableId).insert(chunk);
-              console.log(`Inserted ${chunk.length} rows (max chunker)`);
+              //console.log(`Inserted ${chunk.length} rows (max chunker)`);
               index += size;
             }
           } else {
