@@ -185,6 +185,7 @@ function insert(addDays = 0, startDate = null, writeToFile = false) {
         { name: 'egg_233', type: 'BYTES' },
         { name: 'egg_237', type: 'BYTES' },
         { name: 'egg_1000', type: 'BYTES' },
+        { name: 'egg_1003', type: 'BYTES' },
         { name: 'egg_1004', type: 'BYTES' },
         { name: 'egg_1005', type: 'BYTES' },
         { name: 'egg_1013', type: 'BYTES' },
