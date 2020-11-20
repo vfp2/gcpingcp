@@ -104,15 +104,169 @@ function extractAndInsertEntropy(body, writeToFile = false) {
               }
 
               var rowObj = { recorded_at: moment(record[1]*1000).utc().format('YYYY-MM-DD HH:mm:ss') };
+              if (writeToFile) {
+                rowObj = {
+                  ...rowObj,
+                  'egg_1': null,
+                  'egg_28': null,
+                  'egg_33': null,
+                  'egg_34': null,
+                  'egg_37': null,
+                  'egg_100': null,
+                  'egg_101': null,
+                  'egg_102': null,
+                  'egg_103': null,
+                  'egg_104': null,
+                  'egg_105': null,
+                  'egg_106': null,
+                  'egg_107': null,
+                  'egg_108': null,
+                  'egg_109': null,
+                  'egg_110': null,
+                  'egg_111': null,
+                  'egg_112': null,
+                  'egg_114': null,
+                  'egg_115': null,
+                  'egg_116': null,
+                  'egg_117': null,
+                  'egg_118': null,
+                  'egg_119': null,
+                  'egg_134': null,
+                  'egg_142': null,
+                  'egg_161': null,
+                  'egg_223': null,
+                  'egg_224': null,
+                  'egg_226': null,
+                  'egg_227': null,
+                  'egg_228': null,
+                  'egg_230': null,
+                  'egg_231': null,
+                  'egg_233': null,
+                  'egg_237': null,
+                  'egg_1000': null,
+                  'egg_1003': null,
+                  'egg_1004': null,
+                  'egg_1005': null,
+                  'egg_1013': null,
+                  'egg_1021': null,
+                  'egg_1022': null,
+                  'egg_1023': null,
+                  'egg_1024': null,
+                  'egg_1025': null,
+                  'egg_1026': null,
+                  'egg_1027': null,
+                  'egg_1029': null,
+                  'egg_1051': null,
+                  'egg_1063': null,
+                  'egg_1066': null,
+                  'egg_1070': null,
+                  'egg_1082': null,
+                  'egg_1092': null,
+                  'egg_1095': null,
+                  'egg_1096': null,
+                  'egg_1101': null,
+                  'egg_1113': null,
+                  'egg_1223': null,
+                  'egg_1237': null,
+                  'egg_1245': null,
+                  'egg_1251': null,
+                  'egg_1295': null,
+                  'egg_2000': null,
+                  'egg_2001': null,
+                  'egg_2002': null,
+                  'egg_2006': null,
+                  'egg_2007': null,
+                  'egg_2008': null,
+                  'egg_2009': null,
+                  'egg_2013': null,
+                  'egg_2022': null,
+                  'egg_2023': null,
+                  'egg_2024': null,
+                  'egg_2026': null,
+                  'egg_2027': null,
+                  'egg_2028': null,
+                  'egg_2040': null,
+                  'egg_2041': null,
+                  'egg_2042': null,
+                  'egg_2043': null,
+                  'egg_2044': null,
+                  'egg_2045': null,
+                  'egg_2046': null,
+                  'egg_2047': null,
+                  'egg_2048': null,
+                  'egg_2049': null,
+                  'egg_2052': null,
+                  'egg_2060': null,
+                  'egg_2061': null,
+                  'egg_2062': null,
+                  'egg_2064': null,
+                  'egg_2069': null,
+                  'egg_2070': null,
+                  'egg_2073': null,
+                  'egg_2080': null,
+                  'egg_2083': null,
+                  'egg_2084': null,
+                  'egg_2088': null,
+                  'egg_2091': null,
+                  'egg_2093': null,
+                  'egg_2094': null,
+                  'egg_2097': null,
+                  'egg_2120': null,
+                  'egg_2165': null,
+                  'egg_2173': null,
+                  'egg_2178': null,
+                  'egg_2201': null,
+                  'egg_2202': null,
+                  'egg_2220': null,
+                  'egg_2221': null,
+                  'egg_2222': null,
+                  'egg_2225': null,
+                  'egg_2230': null,
+                  'egg_2231': null,
+                  'egg_2232': null,
+                  'egg_2234': null,
+                  'egg_2235': null,
+                  'egg_2236': null,
+                  'egg_2239': null,
+                  'egg_2240': null,
+                  'egg_2241': null,
+                  'egg_2242': null,
+                  'egg_2243': null,
+                  'egg_2244': null,
+                  'egg_2247': null,
+                  'egg_2248': null,
+                  'egg_2249': null,
+                  'egg_2250': null,
+                  'egg_3005': null,
+                  'egg_3023': null,
+                  'egg_3043': null,
+                  'egg_3045': null,
+                  'egg_3066': null,
+                  'egg_3101': null,
+                  'egg_3103': null,
+                  'egg_3104': null,
+                  'egg_3106': null,
+                  'egg_3107': null,
+                  'egg_3108': null,
+                  'egg_3115': null,
+                  'egg_3142': null,
+                  'egg_3240': null,
+                  'egg_3247': null,
+                  'egg_4002': null,
+                  'egg_4101': null,
+                  'egg_4234': null,
+                  'egg_4251': null
+                };
+              }
               var i = 0;
               _.slice(record, 3) // skip field type, unix timestamp, user friendly timestamp columns
               .forEach(function (samplit) {
-                var uint8 = new Buffer(1);
-                if (samplit) {
+                if (!writeToFile) {
+                  var uint8 = new Buffer(1);
                   uint8[0] = samplit;
-                  rowObj[eggIDs[i]] = uint8
+                  rowObj[eggIDs[i]] = uint8;  // write as BYTE (all samples < 200) for BigQuery (to save space)
                 } else {
-                  uint8[0] = null;
+                  rowObj[eggIDs[i]] = parseInt(samplit); // write int
                 }
                 i++;
               });
@@ -134,7 +288,10 @@ function extractAndInsertEntropy(body, writeToFile = false) {
               index += size;
             }
           } else {
-            fs.writeFile(`${yyyymmdd}.json`, JSON.stringify(rowsForBQ), (err) => {
+            const replacer = function(key, value) {
+              return typeof value === 'undefined' ? null : value;
+            } 
+            fs.writeFile(`${yyyymmdd}.json`, JSON.stringify(rowsForBQ, replacer), (err) => {
               if (err) throw err;
             });
           }
