@@ -125,7 +125,7 @@ function extractAndInsertEntropy(body, writeToFile = false) {
           if (!writeToFile) {
             // max 10,000 rows insert/time on BQ
             let index = 0;
-            let size = 7500; // "error": {\n' + "code": 400,\n' +' "message": "Request payload size exceeds the limit: 10485760 bytes.",\n' +
+            let size = 6500; // "error": {\n' + "code": 400,\n' +' "message": "Request payload size exceeds the limit: 10485760 bytes.",\n' +
       
             while (index < rowsForBQ.length) {
               let chunk = rowsForBQ.slice(index, size + index);
