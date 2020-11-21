@@ -25,8 +25,8 @@ const fs = require('fs');
 
 const {BigQuery} = require('@google-cloud/bigquery');
 const bigquery = new BigQuery();
-const datasetId = 'eggs';
-const tableId = 'basket_data';
+const datasetId = 'eggs_us';
+const tableId = 'basket';
 
 // eg. http://global-mind.org/cgi-bin/eggdatareq.pl?z=1&year=2020&month=1&day=10&stime=00%3A00%3A00&etime=23%3A59%3A59
 const API_HOST = "http://global-mind.org";
@@ -307,7 +307,7 @@ function insert(addDays = 0, startDate = null, writeToFile = false) {
 
     try {
       const schema = [
-        { name: 'recorded_at', type: 'DATETIME', mode: 'REQUIRED' },
+        { name: 'recorded_at', type: 'TIMESTAMP', mode: 'REQUIRED' },
         { name: 'egg_1', type: 'BYTES' },
         { name: 'egg_28', type: 'BYTES' },
         { name: 'egg_33', type: 'BYTES' },
@@ -461,18 +461,22 @@ function insert(addDays = 0, startDate = null, writeToFile = false) {
 
       const options = {
         schema: schema,
-        location: 'SG',
-        // timePartitioning: {
-        //   type: 'DAY',
-        //   field: 'recorded_at',
-        // },
+        location: 'US',
+        timePartitioning: {
+          type: 'MONTH',
+          field: 'recorded_at',
+        },
+        clustering: {
+            fields: [
+              "recorded_at"
+            ]
+          }
       };
 
       await bigquery.dataset(datasetId).createTable(tableId, options);
     } catch {}
 
     var getDate = moment('1998-08-02', 'YYYY-MM-DD');
-    // var getDate = moment('2020-10-20', 'YYYY-MM-DD')
 
     if (startDate) {
       getDate = moment(startDate, 'YYYY-MM-DD')
