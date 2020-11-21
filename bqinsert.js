@@ -1,16 +1,16 @@
 /**
- * I am the inserter(.js)
+ * I am the bqinserter(.js)
  * 
  * I run by:
  * $ npm install
  * $ export GOOGLE_APPLICATION_CREDENTIALS=bigquery_service_account.json
- * $ node inserter.js
+ * $ node bqinserter.js
  * 
  * bigquery_service_account.json is gotten by signing up to Google Cloud Platform (GCP), creating
  * a Service Account (under IAM and Admin) with the BigQuery Admin role (ouch, could do with less),
  * adding a JSON key and saving the file in the same folder as I The Inserter.
  * 
- * So what does I The Inserter Do?
+ * So what does I The BQ Inserter Do?
  * I take all the two decades+ worth of random data from The Globlal Consciousness Project and insert
  * them into in Google's BigQuery.
  * 
