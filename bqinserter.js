@@ -4,7 +4,7 @@
  * I run by:
  * $ npm install
  * $ export GOOGLE_APPLICATION_CREDENTIALS=bigquery_service_account.json
- * $ node bqinserter.js
+ * $ node bqinserter.js <days to add> <start date> [true to write to JSON file instead of BQ insertion]
  * 
  * bigquery_service_account.json is gotten by signing up to Google Cloud Platform (GCP), creating
  * a Service Account (under IAM and Admin) with the BigQuery Admin role (ouch, could do with less),
