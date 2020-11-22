@@ -28,7 +28,32 @@ const { exec } = require("child_process");
 const {BigQuery} = require('@google-cloud/bigquery');
 const bigquery = new BigQuery();
 const datasetId = 'financial_us';
-const tableId = 'fx_market_data';
+const tableId = 'fx_market_data_duka';
+
+function execCmd(getDate, currencyPair, i) {
+  var cmd = `duka ${currencyPair.toUpperCase()} -c S1 -d ${getDate.format('YYYY-MM-DD')}`;
+  console.log(cmd);
+  exec(cmd, (error, stdout, stderr) => {
+    if (error) {
+        console.log(`duka ${currencyPair}/${getDate} error: ${error.message}`);
+        return;
+    }
+    if (stderr) {
+      i++;
+      console.log(`RERUNNING duka ${currencyPair}/${getDate} coz of stderr: ${i}`);
+      execCmd(getDate, currencyPair, i)
+    }
+    console.log(`duka ${currencyPair}/${getDate} stdout: ${stdout}`);
+
+    fs.readFile(`${currencyPair.toUpperCase()}-${getDate.format('YYYY-MM-DD').replaceAll('-', '_')}-${getDate.format('YYYY-MM-DD').replaceAll('-', '_')}.csv`, 'utf8', function (error, data) {
+      if (error) {
+        console.log(`read ${currencyPair}/${getDate} error: ${error.message}`);
+        return;
+      }
+      extractAndInsertEntropy(data, currencyPair.toUpperCase());
+    });
+  });
+}
 
 function extractAndInsertEntropy(data, currencyPair) {
   csvparser(
@@ -111,27 +136,7 @@ function insert(addDays = 0, startDate = null) {
     var getDate = moment(startDate, 'YYYY-MM-DD')
     getDate = getDate.add(addDays, 'd');
 
-    var cmd = `duka ${currencyPair.toUpperCase()} -c S1 -d ${getDate.format('YYYY-MM-DD')}`;
-    console.log(cmd);
-    exec(cmd, (error, stdout, stderr) => {
-      if (error) {
-          console.log(`duka ${startDate} error: ${error.message}`);
-          return;
-      }
-      if (stderr) {
-          console.log(`duka ${startDate} stderr: ${stderr}`);
-          return;
-      }
-      console.log(`duka ${startDate} stdout: ${stdout}`);
-
-      fs.readFile(`${currencyPair.toUpperCase()}-${getDate.format('YYYY-MM-DD').replaceAll('-', '_')}-${getDate.format('YYYY-MM-DD').replaceAll('-', '_')}.csv`, 'utf8', function (error, data) {
-        if (error) {
-          console.log(`read ${startDate} error: ${error.message}`);
-          return;
-        }
-        extractAndInsertEntropy(data, currencyPair.toUpperCase());
-      });
-  });
+    execCmd(getDate, currencyPair, 0);
 };
 
   insertAsync(addDays, startDate);
