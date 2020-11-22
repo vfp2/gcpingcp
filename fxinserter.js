@@ -90,7 +90,7 @@ function extractAndInsertEntropy(data, currencyPair) {
           let index = 0;
           let size = 10000; // maybe: "error": {\n' + "code": 400,\n' +' "message": "Request payload size exceeds the limit: 10485760 bytes.",\n' +
     
-          while (index < 1/*rowsForBQ.length*/) {
+          while (index < rowsForBQ.length) {
             let chunk = rowsForBQ.slice(index, size + index);
             await bigquery.dataset(datasetId).table(tableId).insert(chunk);
             //console.log(`Inserted ${chunk.length} rows (max chunker)`);
