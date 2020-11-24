@@ -92,7 +92,7 @@ function extractAndInsertEntropy(data, currencyPair) {
     
           while (index < rowsForBQ.length) {
             let chunk = rowsForBQ.slice(index, size + index);
-            await bigquery.dataset(datasetId).table(tableId).insert(chunk);
+            bigquery.dataset(datasetId).table(tableId).insert(chunk);
             //console.log(`Inserted ${chunk.length} rows (max chunker)`);
             index += size;
           }
