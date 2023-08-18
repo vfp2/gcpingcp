@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@google-cloud/bigquery": "^7.1.1",
+    "csv-parse": "^3.2.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "request": "^2.88.2"
+  }
+}
