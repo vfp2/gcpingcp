@@ -237,10 +237,12 @@ function extractAndInsertEntropy(body, writeToFile = false) {
                   'egg_2248': null,
                   'egg_2249': null,
                   'egg_2250': null,
+                  'egg_3002': null,
                   'egg_3005': null,
                   'egg_3023': null,
                   'egg_3043': null,
                   'egg_3045': null,
+                  'egg_3060': null,
                   'egg_3066': null,
                   'egg_3101': null,
                   'egg_3103': null,
@@ -254,6 +256,7 @@ function extractAndInsertEntropy(body, writeToFile = false) {
                   'egg_3247': null,
                   'egg_4002': null,
                   'egg_4101': null,
+                  'egg_4142': null,
                   'egg_4234': null,
                   'egg_4251': null
                 };
