@@ -306,7 +306,10 @@ function insert(addDays = 0, startDate = null, writeToFile = false) {
 
     try {
       await bigquery.createDataset(datasetId);
-    } catch {}
+    } catch (cde) {
+      // probably "data already exists". ignore
+      // console.log(cde);
+    }
 
     try {
       const schema = [
@@ -477,7 +480,10 @@ function insert(addDays = 0, startDate = null, writeToFile = false) {
       };
 
       await bigquery.dataset(datasetId).createTable(tableId, options);
-    } catch {}
+    } catch (cte) {
+      // probably "table already exists". ignore
+      // console.log(cte);
+    }
 
     var getDate = moment('1998-08-02', 'YYYY-MM-DD');
 
