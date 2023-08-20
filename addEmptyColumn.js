@@ -1,5 +1,3 @@
-
-function main(datasetId = 'my_dataset', tableId = 'my_table',  eggNumber = 'egg_') {
 /**
  * I am the addEmptyColumn(.js)
  * 
@@ -19,6 +17,8 @@ function main(datasetId = 'my_dataset', tableId = 'my_table',  eggNumber = 'egg_
  * 
  * by fp2.dev
  */
+
+function main(datasetId = 'eggs', tableId = 'basket_data',  eggNumber = 'egg_') {
   // [START bigquery_add_empty_column]
 
   // Import the Google Cloud client library and create a client
@@ -28,10 +28,6 @@ function main(datasetId = 'my_dataset', tableId = 'my_table',  eggNumber = 'egg_
   async function addEmptyColumn() {
     // Adds an empty column to the schema.
 
-    /**
-     * TODO(developer): Uncomment the following lines before running the sample.
-    const datasetId = 'eggs';
-    const tableId = 'basket_data';
     const column = {name: `egg_${eggNumber}`, type: 'BYTES' };
 
     // Retrieve current table metadata
