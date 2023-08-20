@@ -1,20 +1,24 @@
-// Copyright 2019 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-'use strict';
 
 function main(datasetId = 'my_dataset', tableId = 'my_table',  eggNumber = 'egg_') {
+/**
+ * I am the addEmptyColumn(.js)
+ * 
+ * I run by:
+ * $ npm install
+ * $ export GOOGLE_APPLICATION_CREDENTIALS=bigquery_service_account.json
+ * $ node addEmptyColumn.js <BigQuery dataset name> <BigQuery table name> <XXXX>
+ * 
+ * 
+ * bigquery_service_account.json is gotten by signing up to Google Cloud Platform (GCP), creating
+ * a Service Account (under IAM and Admin) with the BigQuery Admin role (ouch, could do with less),
+ * adding a JSON key and saving the file in the same folder as I The Inserter.
+ * 
+ * So what does I The addEmptyColumn Do?
+ * I add a new column to BigQuery for egg_XXXX. XXXX is the name of the new column to add into the table to
+ * represent a new EGG (REG) added to GCP network.
+ * 
+ * by fp2.dev
+ */
   // [START bigquery_add_empty_column]
 
   // Import the Google Cloud client library and create a client
@@ -26,7 +30,6 @@ function main(datasetId = 'my_dataset', tableId = 'my_table',  eggNumber = 'egg_
 
     /**
      * TODO(developer): Uncomment the following lines before running the sample.
-     */
     const datasetId = 'eggs';
     const tableId = 'basket_data';
     const column = {name: `egg_${eggNumber}`, type: 'BYTES' };
