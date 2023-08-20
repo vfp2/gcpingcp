@@ -2,3 +2,4 @@
 node_modules/
 data/
 gcpingcp-god.json
+bigquery_service_account.json
